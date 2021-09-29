@@ -2,11 +2,13 @@ import "./App.css";
 
 // import "bootstrap/dist/css/bootstrap.css";
 // import "bootstrap/dist/js/bootstrap.bundle";
-import Basic from "./Basic";
+
+import FormikComponent from "./components/FormComponents";
 function App() {
   return (
     <div className="App">
-      <Basic />
+      {/* <Basic /> */}
+      <FormikComponent />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   Formik,
   Form,
@@ -6,25 +6,43 @@ import {
   ErrorMessage,
   FieldArray,
   FastField,
-  l,
 } from "formik";
 import * as Yup from "yup";
 import TextError from "./TextError";
 
 const Basic = () => {
+  const [values, setValues] = useState(null);
   const initialValues = {
     firstName: "",
     lastName: "",
     email: "",
     city: "",
-    about: "",
+    address: "",
     phoneNumbers: [""],
   };
 
-  const onSubmit = (values) => {
-    alert(JSON.stringify(values, null, 2));
+  const savedValues = {
+    firstName: "dsfdsf",
+    lastName: "sdfdsfds",
+    email: "dfds@gmail.com",
+    city: "hjhgjg",
+    address: "hjghj",
+    phoneNumbers: ["9537207753"],
   };
 
+  const onSubmit = (values, onSubmitProps) => {
+    console.log("ptop ", onSubmitProps);
+    alert(JSON.stringify(values, null, 2));
+    onSubmitProps.setSubmitting(false);
+    onSubmitProps.resetForm();
+  };
+  const validateAbout = (values) => {
+    let error;
+    if (!values) {
+      error = "Required";
+    }
+    return error;
+  };
   const validationSchema = Yup.object({
     firstName: Yup.string().required("Required"),
     lastName: Yup.string().required("Required"),
@@ -34,117 +52,169 @@ const Basic = () => {
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={values || initialValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
+      enableReinitialize
+      // validateOnChange={false}
+      // validateOnBlur={false}
     >
-      <div className="flex-center flex-column">
-        <h1>Sign up</h1>
-        <Form className=" g-3 ">
-          <div className="col">
-            <label htmlFor="firstName" className="form-label">
-              First name
-            </label>
-            <Field
-              type="text"
-              className="form-control"
-              id="firstName"
-              name="firstName"
-            />
-            <ErrorMessage component={TextError} name="firstName" />
-          </div>
-          <div className="col">
-            <label htmlFor="lastName" className="form-label">
-              Last name
-            </label>
-            <Field
-              type="text"
-              className="form-control"
-              name="lastName"
-              id="lastName"
-            />
-            <ErrorMessage component={TextError} name="lastName" />
-          </div>
-          <div className="col">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <div className="Field-group">
+      {(formik) => {
+        console.log(formik);
+        return (
+          <Form className=" g-3 ">
+            <div className="col">
+              <label htmlFor="firstName" className="form-label">
+                First name
+              </label>
               <Field
                 type="text"
                 className="form-control"
-                id="email"
-                name="email"
-                aria-describedby="FieldGroupPrepend"
+                id="firstName"
+                name="firstName"
               />
+              <ErrorMessage component={TextError} name="firstName" />
             </div>
-            <ErrorMessage component={TextError} name="email" />
-          </div>
-          <div className="col">
-            <label htmlFor="city" className="form-label">
-              City
-            </label>
-            <FastField
-              type="text"
-              className="form-control"
-              id="city"
-              name="city"
-            />
-            <ErrorMessage component={TextError} name="city" />
-          </div>
-          <div className="col">
-            <label htmlFor="phoneNumbers" className="form-label">
-              Phone NUmber
-            </label>
-            <FieldArray
-              type="text"
-              className="form-control"
-              id="phoneNumbers"
-              name="phoneNumbers"
-            >
-              {(fieldArrayProps) => {
-                const { push, remove, form } = fieldArrayProps;
-                const { values } = form;
-                const { phoneNumbers } = values;
-                console.log(form.errors);
-                return (
-                  <div>
-                    {phoneNumbers.map((phoneNumbers, index) => (
-                      <div key={index}>
-                        <Field name={`phoneNumbers[${index}]`} />
-                        <button type="button" onClick={() => remove(index)}>
-                          Remove
-                        </button>
-                        <button type="button" onClick={() => push("")}>
-                          Add
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                );
-              }}
-            </FieldArray>
-            <ErrorMessage component={TextError} name="phoneNumbers" />
-          </div>
-          <div className="col">
-            <label htmlFor="about">About</label>
-            <Field name="about">
-              {(props) => {
-                const { field, meta, form } = props;
-                return (
-                  <textarea className="form-control" id="address" {...field} />
-                );
-              }}
-            </Field>
-          </div>
+            <div className="col">
+              <label htmlFor="lastName" className="form-label">
+                Last name
+              </label>
+              <Field
+                type="text"
+                className="form-control"
+                name="lastName"
+                id="lastName"
+              />
+              <ErrorMessage component={TextError} name="lastName" />
+            </div>
+            <div className="col">
+              <label htmlFor="email" className="form-label">
+                Email
+              </label>
+              <div className="Field-group">
+                <Field
+                  type="text"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  aria-describedby="FieldGroupPrepend"
+                />
+              </div>
+              <div className="col"></div>
+              <ErrorMessage component={TextError} name="email" />
+            </div>
+            <div className="col">
+              <label htmlFor="city" className="form-label">
+                City
+              </label>
+              <FastField
+                type="text"
+                className="form-control"
+                id="city"
+                name="city"
+              />
+              <ErrorMessage component={TextError} name="city" />
+            </div>
+            <div className="col">
+              <label htmlFor="phoneNumbers" className="form-label">
+                Phone NUmber
+              </label>
+              <FieldArray
+                type="text"
+                className="form-control"
+                id="phoneNumbers"
+                name="phoneNumbers"
+              >
+                {(fieldArrayProps) => {
+                  const { push, remove, form } = fieldArrayProps;
+                  const { values } = form;
+                  const { phoneNumbers } = values;
+                  console.log(form.errors);
+                  return (
+                    <div>
+                      {phoneNumbers.map((phoneNumbers, index) => (
+                        <div key={index}>
+                          <Field name={`phoneNumbers[${index}]`} />
+                          {index > 0 ? (
+                            <button type="button" onClick={() => remove(index)}>
+                              Remove
+                            </button>
+                          ) : null}
+                          <button type="button" onClick={() => push("")}>
+                            Add
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }}
+              </FieldArray>
+              <ErrorMessage component={TextError} name="phoneNumbers" />
+            </div>
+            <div className="col">
+              <label htmlFor="address">About</label>
+              <Field
+                as="textarea"
+                name="address"
+                id="address"
+                validate={validateAbout}
+                className="form-contro"
+              />
 
-          <div className="col-12">
-            <button className="btn btn-primary" type="submit">
-              Submit form
-            </button>
-          </div>
-        </Form>
-      </div>
+              <ErrorMessage component={TextError} name="address" />
+            </div>
+
+            <div className="col-12">
+              {/* <button
+                type="button"
+                onClick={() => formik.setFieldTouched("address")}
+              >
+                Visit comments
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  formik.setTouched({
+                    firstName: true,
+                    email: true,
+
+                    address: true,
+                  })
+                }
+              >
+                Visit all
+              </button>
+              <button
+                className="btn btn-info"
+                onClick={() => formik.validateField("address")}
+                type="button"
+              >
+                Validate About
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => formik.validateForm()}
+                type="submit"
+              >
+                Validate All
+              </button> */}
+
+              <button type="button" onClick={() => setValues(savedValues)}>
+                Load Save Data
+              </button>
+              <button
+                className="btn btn-success"
+                // disabled={!formik.dirty}
+                disabled={!formik.isValid || formik.isSubmitting}
+                type="submit"
+              >
+                Submit form
+              </button>
+            </div>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };
